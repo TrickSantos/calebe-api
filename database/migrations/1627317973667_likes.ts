@@ -1,15 +1,13 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
-export default class Equipes extends BaseSchema {
-  protected tableName = 'equipes'
+export default class Likes extends BaseSchema {
+  protected tableName = 'likes'
 
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.integer('igreja_id').unsigned().references('igrejas.id')
-      table.string('nome').unique()
-      table.string('instagram').unique()
-      table.string('avatar')
+      table.integer('devocional_id').unsigned().references('devocionais.id').onDelete('cascade')
+      table.integer('user_id').unsigned().references('users.id').onDelete('cascade')
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })

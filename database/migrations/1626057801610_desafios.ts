@@ -13,6 +13,7 @@ export default class Desafios extends BaseSchema {
       table.text('conteudo')
       table.dateTime('liberacao')
       table.dateTime('encerramento')
+      table.boolean('status').defaultTo(false)
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })

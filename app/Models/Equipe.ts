@@ -2,6 +2,7 @@ import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, belongsTo, column, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
 import Igreja from './Igreja'
+import Resposta from './Resposta'
 
 export default class Equipe extends BaseModel {
   @column({ isPrimary: true })
@@ -30,4 +31,7 @@ export default class Equipe extends BaseModel {
 
   @belongsTo(() => Igreja)
   public igreja: BelongsTo<typeof Igreja>
+
+  @hasMany(() => Resposta)
+  public respostas: HasMany<typeof Resposta>
 }

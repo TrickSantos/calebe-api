@@ -1,6 +1,9 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema } from '@ioc:Adonis/Core/Validator'
+import Bull from '@ioc:Rocketseat/Bull'
 import Desafio from 'App/Models/Desafio'
+import LiberarDesafio from 'App/Jobs/LiberarDesafio'
+import EncerrarDesafio from 'App/Jobs/EncerrarDesafio'
 
 export default class DesafiosController {
   public async index({ response }: HttpContextContract) {
@@ -33,7 +36,12 @@ export default class DesafiosController {
           },
         })
         .then(async (data) => {
-          await Desafio.create(data).then((desafio) => response.send(desafio))
+          await Desafio.create(data).then((desafio) => {
+            Bull.schedule(new LiberarDesafio().key, desafio, desafio.liberacao.toJSDate())
+            Bull.schedule(new EncerrarDesafio().key, desafio, desafio.encerramento.toJSDate())
+
+            return response.send(desafio)
+          })
         })
     } catch (error) {
       if (error.messages) {

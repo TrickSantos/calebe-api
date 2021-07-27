@@ -13,6 +13,7 @@ export default class Devocionais extends BaseSchema {
       table.string('video')
       table.text('conteudo')
       table.dateTime('liberacao')
+      table.boolean('status').defaultTo(false)
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })

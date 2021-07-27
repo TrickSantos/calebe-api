@@ -50,6 +50,7 @@ export default class AuthController {
       await new Recuperar(user, token.token).send()
       return response.status(200).send({ message: 'Email enviado com sucesso' })
     } catch (error) {
+      console.log(error)
       return response.status(500).send({ message: 'Este email não existe, tente novamente' })
     }
   }

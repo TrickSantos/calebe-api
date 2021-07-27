@@ -29,5 +29,12 @@ export default Env.rules({
   SMTP_PORT: Env.schema.number(),
   SMTP_USERNAME: Env.schema.string(),
   SMTP_PASSWORD: Env.schema.string(),
+  STORAGE_ENDPOINT: Env.schema.string(),
+  STORAGE_ACCESS_KEY_ID: Env.schema.string(),
+  STORAGE_ACCESS_SECRET_KEY: Env.schema.string(),
+  STORAGE_BUCKET: Env.schema.string(),
   FRONTEND_URL: Env.schema.string(),
+  BULL_REDIS_HOST: Env.schema.string({ format: 'host' }),
+  BULL_REDIS_PORT: Env.schema.number(),
+  BULL_REDIS_PASSWORD: Env.schema.string.optional(),
 })
