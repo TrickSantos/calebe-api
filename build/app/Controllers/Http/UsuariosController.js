@@ -23,7 +23,10 @@ class UsuariosController {
             await request
                 .validate({
                 schema: Validator_1.schema.create({
-                    email: Validator_1.schema.string({}, [Validator_1.rules.email()]),
+                    email: Validator_1.schema.string({}, [
+                        Validator_1.rules.email(),
+                        Validator_1.rules.unique({ column: 'email', table: 'users' }),
+                    ]),
                     nome: Validator_1.schema.string(),
                     cpf: Validator_1.schema.string(),
                     equipeId: Validator_1.schema.number([Validator_1.rules.exists({ column: 'id', table: 'equipes' })]),
@@ -32,6 +35,7 @@ class UsuariosController {
                 messages: {
                     'email.required': 'O email precisa ser informado',
                     'email.email': 'O email precisa estar em um formato válido',
+                    'email.unique': 'Este já está sendo usado',
                     'nome': 'O nome precisa ser informado',
                     'cpf': 'O CPF precisa ser informado',
                     'equipeId': 'A equipe precisa ser informada',

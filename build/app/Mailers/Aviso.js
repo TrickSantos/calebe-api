@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Mail_1 = global[Symbol.for('ioc.use')]("Adonis/Addons/Mail");
 const View_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/View"));
+const Env_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Env"));
 const mjml_1 = __importDefault(require("mjml"));
 class Aviso extends Mail_1.BaseMailer {
     constructor(lider, equipe) {
@@ -13,7 +14,11 @@ class Aviso extends Mail_1.BaseMailer {
         this.equipe = equipe;
     }
     async prepare(message) {
-        const html = mjml_1.default(await View_1.default.render('emails/aviso', { equipe: this.equipe.nome, nome: this.lider.nome })).html;
+        const html = mjml_1.default(await View_1.default.render('emails/aviso', {
+            equipe: this.equipe.nome,
+            nome: this.lider.nome,
+            url: Env_1.default.get('MOBILE_URL'),
+        })).html;
         message
             .from('naoresponda@calebealm.com')
             .to(this.lider.email)

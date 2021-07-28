@@ -24,6 +24,7 @@ exports.default = Env_1.default.rules({
     STORAGE_ACCESS_SECRET_KEY: Env_1.default.schema.string(),
     STORAGE_BUCKET: Env_1.default.schema.string(),
     FRONTEND_URL: Env_1.default.schema.string(),
+    MOBILE_URL: Env_1.default.schema.string(),
     BULL_REDIS_HOST: Env_1.default.schema.string({ format: 'host' }),
     BULL_REDIS_PORT: Env_1.default.schema.number(),
     BULL_REDIS_PASSWORD: Env_1.default.schema.string.optional(),

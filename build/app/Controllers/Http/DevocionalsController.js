@@ -10,10 +10,19 @@ const Like_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Like"))
 const Bull_1 = __importDefault(global[Symbol.for('ioc.use')]("Rocketseat/Bull"));
 const LiberarDevocional_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Jobs/LiberarDevocional"));
 class DevocionalsController {
-    async index({ response }) {
+    async index({ response, request }) {
         try {
+            const { status } = request.all();
             await Devocional_1.default.query()
+                .where((builder) => {
+                if (status) {
+                    builder.where({ status });
+                }
+            })
                 .preload('autor')
+                .preload('comentarios')
+                .preload('likes')
+                .orderBy('id', 'desc')
                 .then((devocionais) => response.status(200).send(devocionais));
         }
         catch (error) {
