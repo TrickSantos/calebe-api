@@ -20,7 +20,10 @@ export default class UsuariosController {
       await request
         .validate({
           schema: schema.create({
-            email: schema.string({}, [rules.email()]),
+            email: schema.string({}, [
+              rules.email(),
+              rules.unique({ column: 'email', table: 'users' }),
+            ]),
             nome: schema.string(),
             cpf: schema.string(),
             equipeId: schema.number([rules.exists({ column: 'id', table: 'equipes' })]),
@@ -29,6 +32,7 @@ export default class UsuariosController {
           messages: {
             'email.required': 'O email precisa ser informado',
             'email.email': 'O email precisa estar em um formato válido',
+            'email.unique': 'Este já está sendo usado',
             'nome': 'O nome precisa ser informado',
             'cpf': 'O CPF precisa ser informado',
             'equipeId': 'A equipe precisa ser informada',

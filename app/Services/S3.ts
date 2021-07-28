@@ -33,8 +33,8 @@ class S3Service {
             console.log(err)
             reject(err)
           }
-          console.log(data)
-          resolve(data.Location)
+
+          resolve(`https://calebe.nyc3.cdn.digitaloceanspaces.com/${data.Key}`)
         }
       )
     })

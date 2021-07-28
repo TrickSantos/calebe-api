@@ -7,10 +7,19 @@ import Bull from '@ioc:Rocketseat/Bull'
 import LiberarDevocional from 'App/Jobs/LiberarDevocional'
 
 export default class DevocionalsController {
-  public async index({ response }: HttpContextContract) {
+  public async index({ response, request }: HttpContextContract) {
     try {
+      const { status } = request.all()
       await Devocional.query()
+        .where((builder) => {
+          if (status) {
+            builder.where({ status })
+          }
+        })
         .preload('autor')
+        .preload('comentarios')
+        .preload('likes')
+        .orderBy('id', 'desc')
         .then((devocionais) => response.status(200).send(devocionais))
     } catch (error) {
       return response.status(500).send(error.message)
