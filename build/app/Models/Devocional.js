@@ -18,6 +18,16 @@ const User_1 = __importDefault(require("./User"));
 const Like_1 = __importDefault(require("./Like"));
 const Comentario_1 = __importDefault(require("./Comentario"));
 class Devocional extends Orm_1.BaseModel {
+    constructor() {
+        super(...arguments);
+        this.serializeExtras = true;
+    }
+    serializeExtra() {
+        return {
+            totalLikes: this.$extras.likes_count,
+            totalComentarios: this.$extras.comentarios_count,
+        };
+    }
 }
 Devocional.table = 'devocionais';
 __decorate([

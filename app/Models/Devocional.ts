@@ -7,6 +7,8 @@ import Comentario from './Comentario'
 export default class Devocional extends BaseModel {
   public static table = 'devocionais'
 
+  public serializeExtras = true
+
   @column({ isPrimary: true })
   public id: number
 
@@ -50,4 +52,11 @@ export default class Devocional extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
+  public serializeExtra() {
+    return {
+      totalLikes: this.$extras.likes_count,
+      totalComentarios: this.$extras.comentarios_count,
+    }
+  }
 }

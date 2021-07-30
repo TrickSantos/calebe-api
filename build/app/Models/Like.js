@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const luxon_1 = require("luxon");
 const Orm_1 = global[Symbol.for('ioc.use')]("Adonis/Lucid/Orm");
 const User_1 = __importDefault(require("./User"));
+const Devocional_1 = __importDefault(require("./Devocional"));
 class Like extends Orm_1.BaseModel {
 }
 __decorate([
@@ -41,5 +42,9 @@ __decorate([
     Orm_1.belongsTo(() => User_1.default),
     __metadata("design:type", Object)
 ], Like.prototype, "usuario", void 0);
+__decorate([
+    Orm_1.belongsTo(() => Devocional_1.default),
+    __metadata("design:type", Object)
+], Like.prototype, "devocional", void 0);
 exports.default = Like;
 //# sourceMappingURL=Like.js.map

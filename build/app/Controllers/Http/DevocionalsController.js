@@ -6,24 +6,48 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Validator_1 = global[Symbol.for('ioc.use')]("Adonis/Core/Validator");
 const Devocional_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Devocional"));
 const Comentario_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Comentario"));
-const Like_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Like"));
 const Bull_1 = __importDefault(global[Symbol.for('ioc.use')]("Rocketseat/Bull"));
 const LiberarDevocional_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Jobs/LiberarDevocional"));
 class DevocionalsController {
     async index({ response, request }) {
         try {
             const { status } = request.all();
-            await Devocional_1.default.query()
-                .where((builder) => {
-                if (status) {
-                    builder.where({ status });
-                }
-            })
-                .preload('autor')
-                .preload('comentarios')
-                .preload('likes')
-                .orderBy('id', 'desc')
-                .then((devocionais) => response.status(200).send(devocionais));
+            const page = request.input('page');
+            if (status) {
+                await Devocional_1.default.query()
+                    .where({ status })
+                    .preload('autor')
+                    .preload('comentarios', (query) => query.preload('usuario'))
+                    .preload('likes')
+                    .orderBy('id', 'desc')
+                    .paginate(page, 4)
+                    .then((devocionais) => {
+                    devocionais.namingStrategy = {
+                        paginationMetaKeys() {
+                            return {
+                                total: 'total',
+                                perPage: 'perPage',
+                                currentPage: 'currentPage',
+                                lastPage: 'lastPage',
+                                firstPage: 'firstPage',
+                                firstPageUrl: 'firstPageUrl',
+                                lastPageUrl: 'lastPageUrl',
+                                nextPageUrl: 'nextPageUrl',
+                                previousPageUrl: 'previousPageUrl',
+                            };
+                        },
+                    };
+                    return response.status(200).send(devocionais);
+                });
+            }
+            else {
+                await Devocional_1.default.query()
+                    .preload('autor')
+                    .preload('comentarios')
+                    .preload('likes')
+                    .orderBy('id', 'desc')
+                    .then((devocionais) => response.status(200).send(devocionais));
+            }
         }
         catch (error) {
             return response.status(500).send(error.message);
@@ -120,7 +144,11 @@ class DevocionalsController {
                     comentario,
                     userId: auth.user?.id,
                 })
-                    .then(() => response.status(200));
+                    .then(async () => {
+                    await devocional.load('comentarios', (query) => query.preload('usuario'));
+                    await devocional.load('likes');
+                    return response.status(200).send(devocional);
+                });
             });
         }
         catch (error) {
@@ -136,7 +164,11 @@ class DevocionalsController {
                     .create({
                     userId: auth.user?.id,
                 })
-                    .then(() => response.status(200));
+                    .then(async () => {
+                    await devocional.load('likes');
+                    await devocional.load('comentarios');
+                    return response.status(200).send(devocional);
+                });
             });
         }
         catch (error) {
@@ -155,12 +187,16 @@ class DevocionalsController {
             return response.status(500).send(error.message);
         }
     }
-    async removerCurtida({ params, response }) {
+    async removerCurtida({ params, response, auth }) {
         try {
             const { id } = params;
-            await Like_1.default.findOrFail(id).then(async (like) => {
-                await like.delete();
-                return response.status(200);
+            await Devocional_1.default.findOrFail(id).then(async (devocional) => {
+                await devocional.load('likes');
+                const like = devocional.likes.find((like) => like.userId === auth.user?.id);
+                await like?.delete();
+                await devocional.load('likes');
+                await devocional.load('comentarios');
+                return response.status(200).send(devocional);
             });
         }
         catch (error) {

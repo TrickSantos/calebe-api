@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
+import Devocional from './Devocional'
 
 export default class Like extends BaseModel {
   @column({ isPrimary: true })
@@ -20,4 +21,7 @@ export default class Like extends BaseModel {
 
   @belongsTo(() => User)
   public usuario: BelongsTo<typeof User>
+
+  @belongsTo(() => Devocional)
+  public devocional: BelongsTo<typeof Devocional>
 }

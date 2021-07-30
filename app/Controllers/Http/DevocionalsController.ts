@@ -2,7 +2,6 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema } from '@ioc:Adonis/Core/Validator'
 import Devocional from 'App/Models/Devocional'
 import Comentario from 'App/Models/Comentario'
-import Like from 'App/Models/Like'
 import Bull from '@ioc:Rocketseat/Bull'
 import LiberarDevocional from 'App/Jobs/LiberarDevocional'
 
@@ -10,17 +9,41 @@ export default class DevocionalsController {
   public async index({ response, request }: HttpContextContract) {
     try {
       const { status } = request.all()
-      await Devocional.query()
-        .where((builder) => {
-          if (status) {
-            builder.where({ status })
-          }
-        })
-        .preload('autor')
-        .preload('comentarios')
-        .preload('likes')
-        .orderBy('id', 'desc')
-        .then((devocionais) => response.status(200).send(devocionais))
+      const page = request.input('page')
+      if (status) {
+        await Devocional.query()
+          .where({ status })
+          .preload('autor')
+          .preload('comentarios', (query) => query.preload('usuario'))
+          .preload('likes')
+          .orderBy('id', 'desc')
+          .paginate(page, 4)
+          .then((devocionais) => {
+            devocionais.namingStrategy = {
+              paginationMetaKeys() {
+                return {
+                  total: 'total',
+                  perPage: 'perPage',
+                  currentPage: 'currentPage',
+                  lastPage: 'lastPage',
+                  firstPage: 'firstPage',
+                  firstPageUrl: 'firstPageUrl',
+                  lastPageUrl: 'lastPageUrl',
+                  nextPageUrl: 'nextPageUrl',
+                  previousPageUrl: 'previousPageUrl',
+                }
+              },
+            }
+            return response.status(200).send(devocionais)
+          })
+      } else {
+        await Devocional.query()
+          .preload('autor')
+          .preload('comentarios')
+          .preload('likes')
+          .orderBy('id', 'desc')
+          .then((devocionais) => response.status(200).send(devocionais))
+      }
     } catch (error) {
       return response.status(500).send(error.message)
     }
@@ -116,7 +139,11 @@ export default class DevocionalsController {
             comentario,
             userId: auth.user?.id,
           })
-          .then(() => response.status(200))
+          .then(async () => {
+            await devocional.load('comentarios', (query) => query.preload('usuario'))
+            await devocional.load('likes')
+            return response.status(200).send(devocional)
+          })
       })
     } catch (error) {
       return response.status(500).send(error.message)
@@ -132,7 +159,11 @@ export default class DevocionalsController {
           .create({
             userId: auth.user?.id,
           })
-          .then(() => response.status(200))
+          .then(async () => {
+            await devocional.load('likes')
+            await devocional.load('comentarios')
+            return response.status(200).send(devocional)
+          })
       })
     } catch (error) {
       return response.status(500).send(error.message)
@@ -151,12 +182,16 @@ export default class DevocionalsController {
     }
   }
 
-  public async removerCurtida({ params, response }: HttpContextContract) {
+  public async removerCurtida({ params, response, auth }: HttpContextContract) {
     try {
       const { id } = params
-      await Like.findOrFail(id).then(async (like) => {
-        await like.delete()
-        return response.status(200)
+      await Devocional.findOrFail(id).then(async (devocional) => {
+        await devocional.load('likes')
+        const like = devocional.likes.find((like) => like.userId === auth.user?.id)
+        await like?.delete()
+        await devocional.load('likes')
+        await devocional.load('comentarios')
+        return response.status(200).send(devocional)
       })
     } catch (error) {
       return response.status(500).send(error.message)
