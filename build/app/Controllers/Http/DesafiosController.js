@@ -9,9 +9,19 @@ const Desafio_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Desa
 const LiberarDesafio_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Jobs/LiberarDesafio"));
 const EncerrarDesafio_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Jobs/EncerrarDesafio"));
 class DesafiosController {
-    async index({ response }) {
+    async index({ response, request }) {
         try {
-            await Desafio_1.default.all().then((desafios) => response.status(200).send(desafios));
+            const { equipeId } = request.all();
+            await Desafio_1.default.query()
+                .where((builder) => {
+                if (equipeId) {
+                    builder.where('status', '=', true);
+                    builder.whereDoesntHave('respostas', (query) => {
+                        query.where({ equipeId });
+                    });
+                }
+            })
+                .then((desafios) => response.status(200).send(desafios));
         }
         catch (error) {
             return response.status(500).send(error.message);

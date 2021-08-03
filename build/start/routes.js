@@ -7,6 +7,7 @@ const Route_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Route
 Route_1.default.resource('/equipe', 'EquipesController').apiOnly();
 Route_1.default.resource('/usuario', 'UsuariosController').apiOnly().middleware({ '*': 'auth' });
 Route_1.default.resource('/desafio', 'DesafiosController').apiOnly().middleware({ '*': 'auth' });
+Route_1.default.resource('/resposta', 'RespostasController').apiOnly().middleware({ '*': 'auth' });
 Route_1.default.resource('/devocional', 'DevocionalsController').apiOnly().middleware({ '*': 'auth' });
 Route_1.default.put('/comentar/:id', 'DevocionalsController.comentar').middleware('auth');
 Route_1.default.put('/curtir/:id', 'DevocionalsController.curtir').middleware('auth');

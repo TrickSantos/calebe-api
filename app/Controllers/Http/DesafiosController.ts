@@ -6,9 +6,19 @@ import LiberarDesafio from 'App/Jobs/LiberarDesafio'
 import EncerrarDesafio from 'App/Jobs/EncerrarDesafio'
 
 export default class DesafiosController {
-  public async index({ response }: HttpContextContract) {
+  public async index({ response, request }: HttpContextContract) {
     try {
-      await Desafio.all().then((desafios) => response.status(200).send(desafios))
+      const { equipeId } = request.all()
+      await Desafio.query()
+        .where((builder) => {
+          if (equipeId) {
+            builder.where('status', '=', true)
+            builder.whereDoesntHave('respostas', (query) => {
+              query.where({ equipeId })
+            })
+          }
+        })
+        .then((desafios) => response.status(200).send(desafios))
     } catch (error) {
       return response.status(500).send(error.message)
     }

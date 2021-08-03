@@ -5,6 +5,8 @@ import Igreja from './Igreja'
 import Resposta from './Resposta'
 
 export default class Equipe extends BaseModel {
+  public serializeExtras = true
+
   @column({ isPrimary: true })
   public id: number
 

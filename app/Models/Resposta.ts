@@ -4,7 +4,7 @@ import Desafio from './Desafio'
 import Equipe from './Equipe'
 
 interface Iresposta {
-  url: string
+  resposta: string
 }
 
 export default class Resposta extends BaseModel {
@@ -21,13 +21,13 @@ export default class Resposta extends BaseModel {
   public pontos: number
 
   @column()
-  public respostas: Iresposta[]
+  public respostas: Iresposta[] | string
 
   @column()
   public aprovado: boolean
 
-  @column.dateTime()
-  public aprovado_em: DateTime
+  @column.dateTime({ serializeAs: 'aprovadoEm' })
+  public aprovadoEm: DateTime
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

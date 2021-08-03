@@ -36,16 +36,16 @@ __decorate([
 ], Resposta.prototype, "pontos", void 0);
 __decorate([
     Orm_1.column(),
-    __metadata("design:type", Array)
+    __metadata("design:type", Object)
 ], Resposta.prototype, "respostas", void 0);
 __decorate([
     Orm_1.column(),
     __metadata("design:type", Boolean)
 ], Resposta.prototype, "aprovado", void 0);
 __decorate([
-    Orm_1.column.dateTime(),
+    Orm_1.column.dateTime({ serializeAs: 'aprovadoEm' }),
     __metadata("design:type", luxon_1.DateTime)
-], Resposta.prototype, "aprovado_em", void 0);
+], Resposta.prototype, "aprovadoEm", void 0);
 __decorate([
     Orm_1.column.dateTime({ autoCreate: true }),
     __metadata("design:type", luxon_1.DateTime)

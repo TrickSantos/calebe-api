@@ -18,6 +18,10 @@ const User_1 = __importDefault(require("./User"));
 const Igreja_1 = __importDefault(require("./Igreja"));
 const Resposta_1 = __importDefault(require("./Resposta"));
 class Equipe extends Orm_1.BaseModel {
+    constructor() {
+        super(...arguments);
+        this.serializeExtras = true;
+    }
 }
 __decorate([
     Orm_1.column({ isPrimary: true }),

@@ -13,6 +13,9 @@ export default class EquipesController {
       await Equipe.query()
         .preload('membros')
         .preload('igreja')
+        .withAggregate('respostas', (query) => {
+          query.sum('pontos').as('pontuacao')
+        })
         .then((equipes) => response.status(200).send(equipes))
     } catch (error) {
       return response.status(500).send(error.message)

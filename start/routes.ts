@@ -3,6 +3,7 @@ import Route from '@ioc:Adonis/Core/Route'
 Route.resource('/equipe', 'EquipesController').apiOnly()
 Route.resource('/usuario', 'UsuariosController').apiOnly().middleware({ '*': 'auth' })
 Route.resource('/desafio', 'DesafiosController').apiOnly().middleware({ '*': 'auth' })
+Route.resource('/resposta', 'RespostasController').apiOnly().middleware({ '*': 'auth' })
 Route.resource('/devocional', 'DevocionalsController').apiOnly().middleware({ '*': 'auth' })
 Route.put('/comentar/:id', 'DevocionalsController.comentar').middleware('auth')
 Route.put('/curtir/:id', 'DevocionalsController.curtir').middleware('auth')
