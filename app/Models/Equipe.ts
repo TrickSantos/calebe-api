@@ -1,5 +1,16 @@
 import { DateTime } from 'luxon'
-import { BaseModel, BelongsTo, belongsTo, column, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import {
+  afterFetch,
+  BaseModel,
+  beforeFind,
+  BelongsTo,
+  belongsTo,
+  column,
+  computed,
+  HasMany,
+  hasMany,
+  ModelQueryBuilderContract,
+} from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
 import Igreja from './Igreja'
 import Resposta from './Resposta'
@@ -36,4 +47,24 @@ export default class Equipe extends BaseModel {
 
   @hasMany(() => Resposta)
   public respostas: HasMany<typeof Resposta>
+
+  @computed()
+  public get pontos() {
+    let pontuacao: number = this.$extras.pontuacao
+    return pontuacao
+  }
+
+  @afterFetch()
+  public static pontuacao(equipes: Equipe[]) {
+    equipes.forEach((equipe) => {
+      equipe.$extras.pontuacao = equipe.$extras.pontuacao ? equipe.$extras.pontuacao : 0
+    })
+  }
+
+  @beforeFind()
+  public static withPontuacao(query: ModelQueryBuilderContract<typeof Equipe>) {
+    query.withAggregate('respostas', (builder) => {
+      builder.sum('pontos').as('pontuacao')
+    })
+  }
 }

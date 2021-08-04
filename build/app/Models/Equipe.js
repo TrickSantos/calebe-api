@@ -22,6 +22,20 @@ class Equipe extends Orm_1.BaseModel {
         super(...arguments);
         this.serializeExtras = true;
     }
+    get pontos() {
+        let pontuacao = this.$extras.pontuacao;
+        return pontuacao;
+    }
+    static pontuacao(equipes) {
+        equipes.forEach((equipe) => {
+            equipe.$extras.pontuacao = equipe.$extras.pontuacao ? equipe.$extras.pontuacao : 0;
+        });
+    }
+    static withPontuacao(query) {
+        query.withAggregate('respostas', (builder) => {
+            builder.sum('pontos').as('pontuacao');
+        });
+    }
 }
 __decorate([
     Orm_1.column({ isPrimary: true }),
@@ -63,5 +77,22 @@ __decorate([
     Orm_1.hasMany(() => Resposta_1.default),
     __metadata("design:type", Object)
 ], Equipe.prototype, "respostas", void 0);
+__decorate([
+    Orm_1.computed(),
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [])
+], Equipe.prototype, "pontos", null);
+__decorate([
+    Orm_1.afterFetch(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Array]),
+    __metadata("design:returntype", void 0)
+], Equipe, "pontuacao", null);
+__decorate([
+    Orm_1.beforeFind(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], Equipe, "withPontuacao", null);
 exports.default = Equipe;
 //# sourceMappingURL=Equipe.js.map

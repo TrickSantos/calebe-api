@@ -11,14 +11,21 @@ const Equipe_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Equip
 const S3_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Services/S3"));
 const fs_1 = __importDefault(require("fs"));
 class EquipesController {
-    async index({ response }) {
+    async index({ response, request }) {
+        const { ranking } = request.all();
         try {
             await Equipe_1.default.query()
+                .where((builder) => {
+                if (ranking) {
+                    builder.whereNot({ id: 2 });
+                }
+            })
                 .preload('membros')
                 .preload('igreja')
                 .withAggregate('respostas', (query) => {
                 query.sum('pontos').as('pontuacao');
             })
+                .orderBy('pontuacao', 'desc')
                 .then((equipes) => response.status(200).send(equipes));
         }
         catch (error) {

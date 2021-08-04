@@ -8,14 +8,21 @@ import S3 from 'App/Services/S3'
 import fs from 'fs'
 
 export default class EquipesController {
-  public async index({ response }: HttpContextContract) {
+  public async index({ response, request }: HttpContextContract) {
+    const { ranking } = request.all()
     try {
       await Equipe.query()
+        .where((builder) => {
+          if (ranking) {
+            builder.whereNot({ id: 2 })
+          }
+        })
         .preload('membros')
         .preload('igreja')
         .withAggregate('respostas', (query) => {
           query.sum('pontos').as('pontuacao')
         })
+        .orderBy('pontuacao', 'desc')
         .then((equipes) => response.status(200).send(equipes))
     } catch (error) {
       return response.status(500).send(error.message)
