@@ -35,16 +35,16 @@ export default class EquipesController {
         .validate({
           schema: schema.create({
             equipe: schema.object().members({
-              nome: schema.string(),
+              nome: schema.string({ trim: true }),
               igrejaId: schema.number([rules.exists({ column: 'id', table: 'igrejas' })]),
-              instagram: schema.string(),
+              instagram: schema.string({ trim: true }),
               avatar: schema.file.optional({ extnames: ['jpg', 'png'], size: '10mb' }),
             }),
             lider: schema.object().members({
               email: schema.string({}, [rules.email()]),
               avatar: schema.file.optional({ extnames: ['jpg', 'png'], size: '10mb' }),
-              password: schema.string(),
-              nome: schema.string(),
+              password: schema.string({ trim: true }),
+              nome: schema.string({ trim: true }),
               cpf: schema.string({}, [rules.maxLength(11), rules.minLength(11)]),
             }),
           }),
@@ -113,9 +113,9 @@ export default class EquipesController {
       await request
         .validate({
           schema: schema.create({
-            nome: schema.string.optional(),
+            nome: schema.string.optional({ trim: true }),
             igrejaId: schema.number.optional([rules.exists({ column: 'id', table: 'igrejas' })]),
-            instagram: schema.string.optional(),
+            instagram: schema.string.optional({ trim: true }),
             avatar: schema.file.optional({ extnames: ['jpg', 'png'], size: '10mb' }),
           }),
           messages: {

@@ -29,11 +29,11 @@ export default class DesafiosController {
       await request
         .validate({
           schema: schema.create({
-            titulo: schema.string(),
+            titulo: schema.string({ trim: true }),
             pontos: schema.number(),
             cover: schema.string.optional(),
             video: schema.string.optional(),
-            conteudo: schema.string(),
+            conteudo: schema.string({ trim: true }),
             liberacao: schema.date(),
             encerramento: schema.date(),
           }),
@@ -76,11 +76,11 @@ export default class DesafiosController {
       await request
         .validate({
           schema: schema.create({
-            titulo: schema.string.optional(),
+            titulo: schema.string.optional({ trim: true }),
             pontos: schema.number.optional(),
             cover: schema.string.optional(),
             video: schema.string.optional(),
-            conteudo: schema.string.optional(),
+            conteudo: schema.string.optional({ trim: true }),
             liberacao: schema.date.optional(),
             encerramento: schema.date.optional(),
           }),

@@ -58,11 +58,11 @@ class DevocionalsController {
             await request
                 .validate({
                 schema: Validator_1.schema.create({
-                    titulo: Validator_1.schema.string(),
-                    verso: Validator_1.schema.string.optional(),
+                    titulo: Validator_1.schema.string({ trim: true }),
+                    verso: Validator_1.schema.string.optional({ trim: true }),
                     cover: Validator_1.schema.string.optional(),
                     video: Validator_1.schema.string.optional(),
-                    conteudo: Validator_1.schema.string.optional(),
+                    conteudo: Validator_1.schema.string.optional({ trim: true }),
                     liberacao: Validator_1.schema.date(),
                 }),
                 messages: {
@@ -91,11 +91,11 @@ class DevocionalsController {
             await request
                 .validate({
                 schema: Validator_1.schema.create({
-                    titulo: Validator_1.schema.string.optional(),
-                    verso: Validator_1.schema.string.optional(),
+                    titulo: Validator_1.schema.string.optional({ trim: true }),
+                    verso: Validator_1.schema.string.optional({ trim: true }),
                     cover: Validator_1.schema.string.optional(),
                     video: Validator_1.schema.string.optional(),
-                    conteudo: Validator_1.schema.string.optional(),
+                    conteudo: Validator_1.schema.string.optional({ trim: true }),
                     liberacao: Validator_1.schema.date.optional(),
                 }),
                 messages: {

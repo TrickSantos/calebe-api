@@ -54,11 +54,11 @@ export default class DevocionalsController {
       await request
         .validate({
           schema: schema.create({
-            titulo: schema.string(),
-            verso: schema.string.optional(),
+            titulo: schema.string({ trim: true }),
+            verso: schema.string.optional({ trim: true }),
             cover: schema.string.optional(),
             video: schema.string.optional(),
-            conteudo: schema.string.optional(),
+            conteudo: schema.string.optional({ trim: true }),
             liberacao: schema.date(),
           }),
           messages: {
@@ -87,11 +87,11 @@ export default class DevocionalsController {
       await request
         .validate({
           schema: schema.create({
-            titulo: schema.string.optional(),
-            verso: schema.string.optional(),
+            titulo: schema.string.optional({ trim: true }),
+            verso: schema.string.optional({ trim: true }),
             cover: schema.string.optional(),
             video: schema.string.optional(),
-            conteudo: schema.string.optional(),
+            conteudo: schema.string.optional({ trim: true }),
             liberacao: schema.date.optional(),
           }),
           messages: {

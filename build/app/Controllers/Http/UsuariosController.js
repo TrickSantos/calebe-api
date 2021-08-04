@@ -23,11 +23,11 @@ class UsuariosController {
             await request
                 .validate({
                 schema: Validator_1.schema.create({
-                    email: Validator_1.schema.string({}, [
+                    email: Validator_1.schema.string({ trim: true }, [
                         Validator_1.rules.email(),
                         Validator_1.rules.unique({ column: 'email', table: 'users' }),
                     ]),
-                    nome: Validator_1.schema.string(),
+                    nome: Validator_1.schema.string({ trim: true }),
                     cpf: Validator_1.schema.string(),
                     equipeId: Validator_1.schema.number([Validator_1.rules.exists({ column: 'id', table: 'equipes' })]),
                     perfil: Validator_1.schema.enum(['pastor', 'lider', 'membro']),
@@ -73,8 +73,8 @@ class UsuariosController {
             await request
                 .validate({
                 schema: Validator_1.schema.create({
-                    email: Validator_1.schema.string.optional({}, [Validator_1.rules.email()]),
-                    nome: Validator_1.schema.string.optional(),
+                    email: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.email()]),
+                    nome: Validator_1.schema.string.optional({ trim: true }),
                     cpf: Validator_1.schema.string.optional(),
                     password: Validator_1.schema.string.optional(),
                     avatar: Validator_1.schema.file.optional({ extnames: ['jpg', 'gif', 'png'], size: '2mb' }),

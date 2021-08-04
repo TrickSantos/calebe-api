@@ -32,11 +32,11 @@ class DesafiosController {
             await request
                 .validate({
                 schema: Validator_1.schema.create({
-                    titulo: Validator_1.schema.string(),
+                    titulo: Validator_1.schema.string({ trim: true }),
                     pontos: Validator_1.schema.number(),
                     cover: Validator_1.schema.string.optional(),
                     video: Validator_1.schema.string.optional(),
-                    conteudo: Validator_1.schema.string(),
+                    conteudo: Validator_1.schema.string({ trim: true }),
                     liberacao: Validator_1.schema.date(),
                     encerramento: Validator_1.schema.date(),
                 }),
@@ -79,11 +79,11 @@ class DesafiosController {
             await request
                 .validate({
                 schema: Validator_1.schema.create({
-                    titulo: Validator_1.schema.string.optional(),
+                    titulo: Validator_1.schema.string.optional({ trim: true }),
                     pontos: Validator_1.schema.number.optional(),
                     cover: Validator_1.schema.string.optional(),
                     video: Validator_1.schema.string.optional(),
-                    conteudo: Validator_1.schema.string.optional(),
+                    conteudo: Validator_1.schema.string.optional({ trim: true }),
                     liberacao: Validator_1.schema.date.optional(),
                     encerramento: Validator_1.schema.date.optional(),
                 }),

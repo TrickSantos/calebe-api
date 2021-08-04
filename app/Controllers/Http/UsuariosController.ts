@@ -20,11 +20,11 @@ export default class UsuariosController {
       await request
         .validate({
           schema: schema.create({
-            email: schema.string({}, [
+            email: schema.string({ trim: true }, [
               rules.email(),
               rules.unique({ column: 'email', table: 'users' }),
             ]),
-            nome: schema.string(),
+            nome: schema.string({ trim: true }),
             cpf: schema.string(),
             equipeId: schema.number([rules.exists({ column: 'id', table: 'equipes' })]),
             perfil: schema.enum(['pastor', 'lider', 'membro'] as const),
@@ -70,8 +70,8 @@ export default class UsuariosController {
       await request
         .validate({
           schema: schema.create({
-            email: schema.string.optional({}, [rules.email()]),
-            nome: schema.string.optional(),
+            email: schema.string.optional({ trim: true }, [rules.email()]),
+            nome: schema.string.optional({ trim: true }),
             cpf: schema.string.optional(),
             password: schema.string.optional(),
             avatar: schema.file.optional({ extnames: ['jpg', 'gif', 'png'], size: '2mb' }),

@@ -38,16 +38,16 @@ class EquipesController {
                 .validate({
                 schema: Validator_1.schema.create({
                     equipe: Validator_1.schema.object().members({
-                        nome: Validator_1.schema.string(),
+                        nome: Validator_1.schema.string({ trim: true }),
                         igrejaId: Validator_1.schema.number([Validator_1.rules.exists({ column: 'id', table: 'igrejas' })]),
-                        instagram: Validator_1.schema.string(),
+                        instagram: Validator_1.schema.string({ trim: true }),
                         avatar: Validator_1.schema.file.optional({ extnames: ['jpg', 'png'], size: '10mb' }),
                     }),
                     lider: Validator_1.schema.object().members({
                         email: Validator_1.schema.string({}, [Validator_1.rules.email()]),
                         avatar: Validator_1.schema.file.optional({ extnames: ['jpg', 'png'], size: '10mb' }),
-                        password: Validator_1.schema.string(),
-                        nome: Validator_1.schema.string(),
+                        password: Validator_1.schema.string({ trim: true }),
+                        nome: Validator_1.schema.string({ trim: true }),
                         cpf: Validator_1.schema.string({}, [Validator_1.rules.maxLength(11), Validator_1.rules.minLength(11)]),
                     }),
                 }),
@@ -116,9 +116,9 @@ class EquipesController {
             await request
                 .validate({
                 schema: Validator_1.schema.create({
-                    nome: Validator_1.schema.string.optional(),
+                    nome: Validator_1.schema.string.optional({ trim: true }),
                     igrejaId: Validator_1.schema.number.optional([Validator_1.rules.exists({ column: 'id', table: 'igrejas' })]),
-                    instagram: Validator_1.schema.string.optional(),
+                    instagram: Validator_1.schema.string.optional({ trim: true }),
                     avatar: Validator_1.schema.file.optional({ extnames: ['jpg', 'png'], size: '10mb' }),
                 }),
                 messages: {
