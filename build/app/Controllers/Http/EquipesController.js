@@ -38,31 +38,46 @@ class EquipesController {
                 .validate({
                 schema: Validator_1.schema.create({
                     equipe: Validator_1.schema.object().members({
-                        nome: Validator_1.schema.string({ trim: true }),
+                        nome: Validator_1.schema.string({ trim: true }, [
+                            Validator_1.rules.unique({
+                                column: 'nome',
+                                table: 'equipes',
+                            }),
+                        ]),
                         igrejaId: Validator_1.schema.number([Validator_1.rules.exists({ column: 'id', table: 'igrejas' })]),
                         instagram: Validator_1.schema.string({ trim: true }),
                         avatar: Validator_1.schema.file.optional({ extnames: ['jpg', 'png'], size: '10mb' }),
                     }),
                     lider: Validator_1.schema.object().members({
-                        email: Validator_1.schema.string({}, [Validator_1.rules.email()]),
+                        email: Validator_1.schema.string({ trim: true }, [
+                            Validator_1.rules.email(),
+                            Validator_1.rules.unique({ column: 'email', table: 'users' }),
+                        ]),
                         avatar: Validator_1.schema.file.optional({ extnames: ['jpg', 'png'], size: '10mb' }),
                         password: Validator_1.schema.string({ trim: true }),
                         nome: Validator_1.schema.string({ trim: true }),
-                        cpf: Validator_1.schema.string({}, [Validator_1.rules.maxLength(11), Validator_1.rules.minLength(11)]),
+                        cpf: Validator_1.schema.string({}, [
+                            Validator_1.rules.maxLength(11),
+                            Validator_1.rules.minLength(11),
+                            Validator_1.rules.unique({ column: 'cpf', table: 'users' }),
+                        ]),
                     }),
                 }),
                 messages: {
                     'equipe.nome': 'O nome da equipe precisa ser informado',
+                    'equipe.nome.unique': 'Este nome já está em uso, verifique se não está tentando cadastrar 2 vezes',
                     'equipe.igrejaId': 'A igreja precisa ser informada',
                     'equipe.instagram': 'O @ da equipe precisa ser informada',
                     'equipe.avatar.extnames': 'A imagem precisa ser .jpg ou .png',
                     'equipe.avatar.size': 'A imagem pode ter no maximo 10mb',
                     'lider.nome': 'O nome da equipe precisa ser informado',
                     'lider.cpf.required': 'O CPF precisa ser informado',
+                    'lider.cpf.unique': 'O CPF Já está em uso',
                     'lider.cpf.maxLength': 'CPF invalido',
                     'lider.cpf.minLength': 'CPF invalido',
                     'lider.email.required': 'O email do lider precisa ser informado',
                     'lider.email.email': 'O email do lider precisa ser valido',
+                    'lider.email.unique': 'O email do lider já está em uso',
                     'lider.avatar.extnames': 'A imagem precisa ser .jpg ou .png',
                     'lider.avatar.size': 'A imagem pode ter no maximo 10mb',
                     'lider.password.required': 'A senha precisa ser informada',

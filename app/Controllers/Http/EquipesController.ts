@@ -35,31 +35,47 @@ export default class EquipesController {
         .validate({
           schema: schema.create({
             equipe: schema.object().members({
-              nome: schema.string({ trim: true }),
+              nome: schema.string({ trim: true }, [
+                rules.unique({
+                  column: 'nome',
+                  table: 'equipes',
+                }),
+              ]),
               igrejaId: schema.number([rules.exists({ column: 'id', table: 'igrejas' })]),
               instagram: schema.string({ trim: true }),
               avatar: schema.file.optional({ extnames: ['jpg', 'png'], size: '10mb' }),
             }),
             lider: schema.object().members({
-              email: schema.string({}, [rules.email()]),
+              email: schema.string({ trim: true }, [
+                rules.email(),
+                rules.unique({ column: 'email', table: 'users' }),
+              ]),
               avatar: schema.file.optional({ extnames: ['jpg', 'png'], size: '10mb' }),
               password: schema.string({ trim: true }),
               nome: schema.string({ trim: true }),
-              cpf: schema.string({}, [rules.maxLength(11), rules.minLength(11)]),
+              cpf: schema.string({}, [
+                rules.maxLength(11),
+                rules.minLength(11),
+                rules.unique({ column: 'cpf', table: 'users' }),
+              ]),
             }),
           }),
           messages: {
             'equipe.nome': 'O nome da equipe precisa ser informado',
+            'equipe.nome.unique':
+              'Este nome já está em uso, verifique se não está tentando cadastrar 2 vezes',
             'equipe.igrejaId': 'A igreja precisa ser informada',
             'equipe.instagram': 'O @ da equipe precisa ser informada',
             'equipe.avatar.extnames': 'A imagem precisa ser .jpg ou .png',
             'equipe.avatar.size': 'A imagem pode ter no maximo 10mb',
             'lider.nome': 'O nome da equipe precisa ser informado',
             'lider.cpf.required': 'O CPF precisa ser informado',
+            'lider.cpf.unique': 'O CPF Já está em uso',
             'lider.cpf.maxLength': 'CPF invalido',
             'lider.cpf.minLength': 'CPF invalido',
             'lider.email.required': 'O email do lider precisa ser informado',
             'lider.email.email': 'O email do lider precisa ser valido',
+            'lider.email.unique': 'O email do lider já está em uso',
             'lider.avatar.extnames': 'A imagem precisa ser .jpg ou .png',
             'lider.avatar.size': 'A imagem pode ter no maximo 10mb',
             'lider.password.required': 'A senha precisa ser informada',

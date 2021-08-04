@@ -28,7 +28,7 @@ class UsuariosController {
                         Validator_1.rules.unique({ column: 'email', table: 'users' }),
                     ]),
                     nome: Validator_1.schema.string({ trim: true }),
-                    cpf: Validator_1.schema.string(),
+                    cpf: Validator_1.schema.string({}, [Validator_1.rules.unique({ column: 'cpf', table: 'users' })]),
                     equipeId: Validator_1.schema.number([Validator_1.rules.exists({ column: 'id', table: 'equipes' })]),
                     perfil: Validator_1.schema.enum(['pastor', 'lider', 'membro']),
                 }),
@@ -37,7 +37,8 @@ class UsuariosController {
                     'email.email': 'O email precisa estar em um formato válido',
                     'email.unique': 'Este já está sendo usado',
                     'nome': 'O nome precisa ser informado',
-                    'cpf': 'O CPF precisa ser informado',
+                    'cpf.required': 'O CPF precisa ser informado',
+                    'cpf.unique': 'O CPF já está em uso',
                     'equipeId': 'A equipe precisa ser informada',
                     'perfil.enum': 'O perfil precisa ser do tipo: lider ou membro',
                 },
@@ -73,9 +74,12 @@ class UsuariosController {
             await request
                 .validate({
                 schema: Validator_1.schema.create({
-                    email: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.email()]),
+                    email: Validator_1.schema.string.optional({ trim: true }, [
+                        Validator_1.rules.email(),
+                        Validator_1.rules.unique({ column: 'email', table: 'users' }),
+                    ]),
                     nome: Validator_1.schema.string.optional({ trim: true }),
-                    cpf: Validator_1.schema.string.optional(),
+                    cpf: Validator_1.schema.string.optional({}, [Validator_1.rules.unique({ column: 'cpf', table: 'users' })]),
                     password: Validator_1.schema.string.optional(),
                     avatar: Validator_1.schema.file.optional({ extnames: ['jpg', 'gif', 'png'], size: '2mb' }),
                     equipeId: Validator_1.schema.number.optional([Validator_1.rules.exists({ column: 'id', table: 'equipes' })]),
@@ -83,8 +87,9 @@ class UsuariosController {
                 }),
                 messages: {
                     'email.email': 'O email precisa estar em um formato válido',
+                    'email.unique': 'O email já está em uso',
                     'nome': 'O nome precisa ser informado',
-                    'cpf': 'O CPF precisa ser informado',
+                    'cpf.unique': 'O CPF já está em uso',
                     'avatar.extnames': 'A imagem precisa ser .jpg ou .png',
                     'avatar.size': 'A imagem pode ter no maximo 10mb',
                     'equipeId': 'A equipe precisa ser informada',
