@@ -25,7 +25,11 @@ export default class UsuariosController {
               rules.unique({ column: 'email', table: 'users' }),
             ]),
             nome: schema.string({ trim: true }),
-            cpf: schema.string({}, [rules.unique({ column: 'cpf', table: 'users' })]),
+            cpf: schema.string({}, [
+              rules.maxLength(11),
+              rules.minLength(11),
+              rules.unique({ column: 'cpf', table: 'users' }),
+            ]),
             equipeId: schema.number([rules.exists({ column: 'id', table: 'equipes' })]),
             perfil: schema.enum(['pastor', 'lider', 'membro'] as const),
           }),
@@ -68,15 +72,20 @@ export default class UsuariosController {
 
   public async update({ params, request, response }: HttpContextContract) {
     try {
+      const { id } = params
       await request
         .validate({
           schema: schema.create({
             email: schema.string.optional({ trim: true }, [
               rules.email(),
-              rules.unique({ column: 'email', table: 'users' }),
+              rules.unique({ column: 'email', table: 'users', whereNot: { id: id } }),
             ]),
             nome: schema.string.optional({ trim: true }),
-            cpf: schema.string.optional({}, [rules.unique({ column: 'cpf', table: 'users' })]),
+            cpf: schema.string({}, [
+              rules.maxLength(11),
+              rules.minLength(11),
+              rules.unique({ column: 'cpf', table: 'users', whereNot: { id: id } }),
+            ]),
             password: schema.string.optional(),
             avatar: schema.file.optional({ extnames: ['jpg', 'gif', 'png'], size: '2mb' }),
             equipeId: schema.number.optional([rules.exists({ column: 'id', table: 'equipes' })]),
@@ -86,7 +95,6 @@ export default class UsuariosController {
             'email.email': 'O email precisa estar em um formato válido',
             'email.unique': 'O email já está em uso',
             'nome': 'O nome precisa ser informado',
-
             'cpf.unique': 'O CPF já está em uso',
             'avatar.extnames': 'A imagem precisa ser .jpg ou .png',
             'avatar.size': 'A imagem pode ter no maximo 10mb',
@@ -95,7 +103,6 @@ export default class UsuariosController {
           },
         })
         .then(async (data) => {
-          const { id } = params
           await User.findOrFail(id).then(async (user) => {
             let avatar = user.avatar
             if (data.avatar && data.avatar.type && data.avatar.tmpPath) {

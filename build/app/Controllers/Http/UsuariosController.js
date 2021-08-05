@@ -28,7 +28,11 @@ class UsuariosController {
                         Validator_1.rules.unique({ column: 'email', table: 'users' }),
                     ]),
                     nome: Validator_1.schema.string({ trim: true }),
-                    cpf: Validator_1.schema.string({}, [Validator_1.rules.unique({ column: 'cpf', table: 'users' })]),
+                    cpf: Validator_1.schema.string({}, [
+                        Validator_1.rules.maxLength(11),
+                        Validator_1.rules.minLength(11),
+                        Validator_1.rules.unique({ column: 'cpf', table: 'users' }),
+                    ]),
                     equipeId: Validator_1.schema.number([Validator_1.rules.exists({ column: 'id', table: 'equipes' })]),
                     perfil: Validator_1.schema.enum(['pastor', 'lider', 'membro']),
                 }),
@@ -71,15 +75,20 @@ class UsuariosController {
     }
     async update({ params, request, response }) {
         try {
+            const { id } = params;
             await request
                 .validate({
                 schema: Validator_1.schema.create({
                     email: Validator_1.schema.string.optional({ trim: true }, [
                         Validator_1.rules.email(),
-                        Validator_1.rules.unique({ column: 'email', table: 'users' }),
+                        Validator_1.rules.unique({ column: 'email', table: 'users', whereNot: { id: id } }),
                     ]),
                     nome: Validator_1.schema.string.optional({ trim: true }),
-                    cpf: Validator_1.schema.string.optional({}, [Validator_1.rules.unique({ column: 'cpf', table: 'users' })]),
+                    cpf: Validator_1.schema.string({}, [
+                        Validator_1.rules.maxLength(11),
+                        Validator_1.rules.minLength(11),
+                        Validator_1.rules.unique({ column: 'cpf', table: 'users', whereNot: { id: id } }),
+                    ]),
                     password: Validator_1.schema.string.optional(),
                     avatar: Validator_1.schema.file.optional({ extnames: ['jpg', 'gif', 'png'], size: '2mb' }),
                     equipeId: Validator_1.schema.number.optional([Validator_1.rules.exists({ column: 'id', table: 'equipes' })]),
@@ -97,7 +106,6 @@ class UsuariosController {
                 },
             })
                 .then(async (data) => {
-                const { id } = params;
                 await User_1.default.findOrFail(id).then(async (user) => {
                     let avatar = user.avatar;
                     if (data.avatar && data.avatar.type && data.avatar.tmpPath) {
