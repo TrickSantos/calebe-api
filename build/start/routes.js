@@ -9,8 +9,11 @@ Route_1.default.resource('/usuario', 'UsuariosController').apiOnly().middleware(
 Route_1.default.resource('/desafio', 'DesafiosController').apiOnly().middleware({ '*': 'auth' });
 Route_1.default.resource('/resposta', 'RespostasController').apiOnly().middleware({ '*': 'auth' });
 Route_1.default.resource('/devocional', 'DevocionalsController').apiOnly().middleware({ '*': 'auth' });
+Route_1.default.resource('/foto', 'FotosController').apiOnly().middleware({ '*': 'auth' });
 Route_1.default.put('/comentar/:id', 'DevocionalsController.comentar').middleware('auth');
 Route_1.default.put('/curtir/:id', 'DevocionalsController.curtir').middleware('auth');
+Route_1.default.put('/curtir_foto/:id', 'FotosController.curtir').middleware('auth');
+Route_1.default.delete('/curtida_foto/:id', 'FotosController.removerCurtida').middleware('auth');
 Route_1.default.delete('/comentario/:id', 'DevocionalsController.removerComentario').middleware('auth');
 Route_1.default.delete('/curtida/:id', 'DevocionalsController.removerCurtida').middleware('auth');
 Route_1.default.get('/distritos', 'DistritosController.index');

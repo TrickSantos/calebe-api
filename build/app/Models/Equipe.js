@@ -17,6 +17,7 @@ const Orm_1 = global[Symbol.for('ioc.use')]("Adonis/Lucid/Orm");
 const User_1 = __importDefault(require("./User"));
 const Igreja_1 = __importDefault(require("./Igreja"));
 const Resposta_1 = __importDefault(require("./Resposta"));
+const Foto_1 = __importDefault(require("./Foto"));
 class Equipe extends Orm_1.BaseModel {
     constructor() {
         super(...arguments);
@@ -77,6 +78,10 @@ __decorate([
     Orm_1.hasMany(() => Resposta_1.default),
     __metadata("design:type", Object)
 ], Equipe.prototype, "respostas", void 0);
+__decorate([
+    Orm_1.hasManyThrough([() => Foto_1.default, () => User_1.default]),
+    __metadata("design:type", Object)
+], Equipe.prototype, "fotos", void 0);
 __decorate([
     Orm_1.computed(),
     __metadata("design:type", Object),

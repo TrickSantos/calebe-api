@@ -118,6 +118,10 @@ class EquipesController {
             const { id } = params;
             await Equipe_1.default.findOrFail(id).then(async (equipe) => {
                 await equipe.load('igreja', (query) => query.preload('distrito'));
+                await equipe.load('fotos', (query) => {
+                    query.preload('usuario', (query) => query.preload('equipe'));
+                    query.preload('likes');
+                });
                 await equipe.load('membros');
                 return response.send(equipe);
             });

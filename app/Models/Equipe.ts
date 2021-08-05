@@ -9,11 +9,14 @@ import {
   computed,
   HasMany,
   hasMany,
+  HasManyThrough,
+  hasManyThrough,
   ModelQueryBuilderContract,
 } from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
 import Igreja from './Igreja'
 import Resposta from './Resposta'
+import Foto from './Foto'
 
 export default class Equipe extends BaseModel {
   public serializeExtras = true
@@ -47,6 +50,9 @@ export default class Equipe extends BaseModel {
 
   @hasMany(() => Resposta)
   public respostas: HasMany<typeof Resposta>
+
+  @hasManyThrough([() => Foto, () => User])
+  public fotos: HasManyThrough<typeof Foto>
 
   @computed()
   public get pontos() {
