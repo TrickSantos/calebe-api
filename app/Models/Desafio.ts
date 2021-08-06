@@ -21,10 +21,10 @@ export default class Desafio extends BaseModel {
   @column()
   public conteudo: string
 
-  @column.dateTime()
+  @column.date()
   public liberacao: DateTime
 
-  @column.dateTime()
+  @column.date()
   public encerramento: DateTime
 
   @column()

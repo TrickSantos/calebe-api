@@ -8,6 +8,7 @@ const Bull_1 = __importDefault(global[Symbol.for('ioc.use')]("Rocketseat/Bull"))
 const Desafio_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Desafio"));
 const LiberarDesafio_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Jobs/LiberarDesafio"));
 const EncerrarDesafio_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Jobs/EncerrarDesafio"));
+const luxon_1 = require("luxon");
 class DesafiosController {
     async index({ response, request }) {
         try {
@@ -50,8 +51,13 @@ class DesafiosController {
             })
                 .then(async (data) => {
                 await Desafio_1.default.create(data).then((desafio) => {
-                    Bull_1.default.schedule(new LiberarDesafio_1.default().key, desafio, desafio.liberacao.toJSDate());
-                    Bull_1.default.schedule(new EncerrarDesafio_1.default().key, desafio, desafio.encerramento.toJSDate());
+                    if (desafio.liberacao > luxon_1.DateTime.utc()) {
+                        Bull_1.default.schedule(new LiberarDesafio_1.default().key, desafio, desafio.liberacao.toJSDate());
+                    }
+                    else {
+                        Bull_1.default.add(new LiberarDesafio_1.default().key, desafio);
+                    }
+                    Bull_1.default.schedule(new EncerrarDesafio_1.default().key, desafio, desafio.encerramento.startOf('day').toJSDate());
                     return response.send(desafio);
                 });
             });
@@ -100,6 +106,12 @@ class DesafiosController {
                 await Desafio_1.default.findOrFail(id).then(async (desafio) => {
                     desafio.merge(data);
                     await desafio.save();
+                    if (data.liberacao) {
+                        Bull_1.default.schedule(new LiberarDesafio_1.default().key, desafio, desafio.liberacao.startOf('day').toJSDate());
+                    }
+                    if (data.encerramento) {
+                        Bull_1.default.schedule(new EncerrarDesafio_1.default().key, desafio, desafio.encerramento.startOf('day').toJSDate());
+                    }
                     return response.send(desafio);
                 });
             });

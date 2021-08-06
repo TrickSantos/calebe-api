@@ -4,6 +4,7 @@ import Bull from '@ioc:Rocketseat/Bull'
 import Desafio from 'App/Models/Desafio'
 import LiberarDesafio from 'App/Jobs/LiberarDesafio'
 import EncerrarDesafio from 'App/Jobs/EncerrarDesafio'
+import { DateTime } from 'luxon'
 
 export default class DesafiosController {
   public async index({ response, request }: HttpContextContract) {
@@ -47,8 +48,17 @@ export default class DesafiosController {
         })
         .then(async (data) => {
           await Desafio.create(data).then((desafio) => {
-            Bull.schedule(new LiberarDesafio().key, desafio, desafio.liberacao.toJSDate())
-            Bull.schedule(new EncerrarDesafio().key, desafio, desafio.encerramento.toJSDate())
+            if (desafio.liberacao > DateTime.utc()) {
+              Bull.schedule(new LiberarDesafio().key, desafio, desafio.liberacao.toJSDate())
+            } else {
+              Bull.add(new LiberarDesafio().key, desafio)
+            }
+
+            Bull.schedule(
+              new EncerrarDesafio().key,
+              desafio,
+              desafio.encerramento.startOf('day').toJSDate()
+            )
 
             return response.send(desafio)
           })
@@ -97,6 +107,22 @@ export default class DesafiosController {
           await Desafio.findOrFail(id).then(async (desafio) => {
             desafio.merge(data)
             await desafio.save()
+
+            if (data.liberacao) {
+              Bull.schedule(
+                new LiberarDesafio().key,
+                desafio,
+                desafio.liberacao.startOf('day').toJSDate()
+              )
+            }
+            if (data.encerramento) {
+              Bull.schedule(
+                new EncerrarDesafio().key,
+                desafio,
+                desafio.encerramento.startOf('day').toJSDate()
+              )
+            }
+
             return response.send(desafio)
           })
         })

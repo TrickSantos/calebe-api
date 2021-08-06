@@ -8,6 +8,7 @@ const Devocional_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/D
 const Comentario_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Comentario"));
 const Bull_1 = __importDefault(global[Symbol.for('ioc.use')]("Rocketseat/Bull"));
 const LiberarDevocional_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Jobs/LiberarDevocional"));
+const luxon_1 = require("luxon");
 class DevocionalsController {
     async index({ response, request }) {
         try {
@@ -72,7 +73,12 @@ class DevocionalsController {
             })
                 .then(async (data) => {
                 await Devocional_1.default.create({ ...data, autorId: auth.user?.id }).then((devocional) => {
-                    Bull_1.default.schedule(new LiberarDevocional_1.default().key, devocional, devocional.liberacao.toJSDate());
+                    if (devocional.liberacao > luxon_1.DateTime.utc()) {
+                        Bull_1.default.schedule(new LiberarDevocional_1.default().key, devocional, devocional.liberacao.toJSDate());
+                    }
+                    else {
+                        Bull_1.default.add(new LiberarDevocional_1.default().key, devocional);
+                    }
                     return response.status(200).send(devocional);
                 });
             });
@@ -82,6 +88,7 @@ class DevocionalsController {
                 return response.status(500).send(error.messages);
             }
             else {
+                console.log(error);
                 return response.status(500).send(error.message);
             }
         }
@@ -108,6 +115,14 @@ class DevocionalsController {
                 await Devocional_1.default.findOrFail(id).then(async (devocional) => {
                     devocional.merge({ ...data, autorId: auth.user?.id });
                     await devocional.save();
+                    if (data.liberacao) {
+                        if (devocional.liberacao > luxon_1.DateTime.utc()) {
+                            Bull_1.default.schedule(new LiberarDevocional_1.default().key, devocional, devocional.liberacao.toJSDate());
+                        }
+                        else {
+                            Bull_1.default.add(new LiberarDevocional_1.default().key, devocional);
+                        }
+                    }
                     return response.status(200).send(devocional);
                 });
             });

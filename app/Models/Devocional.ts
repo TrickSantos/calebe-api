@@ -30,7 +30,7 @@ export default class Devocional extends BaseModel {
   @column()
   public conteudo: string
 
-  @column.dateTime()
+  @column.date()
   public liberacao: DateTime
 
   @column()

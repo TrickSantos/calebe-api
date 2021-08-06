@@ -4,6 +4,7 @@ import Devocional from 'App/Models/Devocional'
 import Comentario from 'App/Models/Comentario'
 import Bull from '@ioc:Rocketseat/Bull'
 import LiberarDevocional from 'App/Jobs/LiberarDevocional'
+import { DateTime } from 'luxon'
 
 export default class DevocionalsController {
   public async index({ response, request }: HttpContextContract) {
@@ -68,7 +69,15 @@ export default class DevocionalsController {
         })
         .then(async (data) => {
           await Devocional.create({ ...data, autorId: auth.user?.id }).then((devocional) => {
-            Bull.schedule(new LiberarDevocional().key, devocional, devocional.liberacao.toJSDate())
+            if (devocional.liberacao > DateTime.utc()) {
+              Bull.schedule(
+                new LiberarDevocional().key,
+                devocional,
+                devocional.liberacao.toJSDate()
+              )
+            } else {
+              Bull.add(new LiberarDevocional().key, devocional)
+            }
 
             return response.status(200).send(devocional)
           })
@@ -77,6 +86,7 @@ export default class DevocionalsController {
       if (error.messages) {
         return response.status(500).send(error.messages)
       } else {
+        console.log(error)
         return response.status(500).send(error.message)
       }
     }
@@ -104,6 +114,19 @@ export default class DevocionalsController {
           await Devocional.findOrFail(id).then(async (devocional) => {
             devocional.merge({ ...data, autorId: auth.user?.id })
             await devocional.save()
+
+            if (data.liberacao) {
+              if (devocional.liberacao > DateTime.utc()) {
+                Bull.schedule(
+                  new LiberarDevocional().key,
+                  devocional,
+                  devocional.liberacao.toJSDate()
+                )
+              } else {
+                Bull.add(new LiberarDevocional().key, devocional)
+              }
+            }
+
             return response.status(200).send(devocional)
           })
         })

@@ -42,11 +42,11 @@ __decorate([
     __metadata("design:type", String)
 ], Desafio.prototype, "conteudo", void 0);
 __decorate([
-    Orm_1.column.dateTime(),
+    Orm_1.column.date(),
     __metadata("design:type", luxon_1.DateTime)
 ], Desafio.prototype, "liberacao", void 0);
 __decorate([
-    Orm_1.column.dateTime(),
+    Orm_1.column.date(),
     __metadata("design:type", luxon_1.DateTime)
 ], Desafio.prototype, "encerramento", void 0);
 __decorate([

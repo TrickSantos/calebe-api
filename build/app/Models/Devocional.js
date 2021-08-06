@@ -59,7 +59,7 @@ __decorate([
     __metadata("design:type", String)
 ], Devocional.prototype, "conteudo", void 0);
 __decorate([
-    Orm_1.column.dateTime(),
+    Orm_1.column.date(),
     __metadata("design:type", luxon_1.DateTime)
 ], Devocional.prototype, "liberacao", void 0);
 __decorate([
