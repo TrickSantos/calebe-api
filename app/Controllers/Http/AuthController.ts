@@ -21,7 +21,6 @@ export default class AuthController {
           .status(500)
           .send({ message: 'Email ou senha invalidos, favor tentar novamente.' })
       } else {
-        console.log(error)
         return response
           .status(500)
           .send({ message: 'Ocorreu um erro durante a autenticação, favor tentar novamente.' })
