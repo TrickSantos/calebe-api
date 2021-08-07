@@ -22,6 +22,7 @@ class DesafiosController {
                     });
                 }
             })
+                .orderBy('liberacao', 'asc')
                 .then((desafios) => response.status(200).send(desafios));
         }
         catch (error) {

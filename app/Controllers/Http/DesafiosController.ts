@@ -19,6 +19,7 @@ export default class DesafiosController {
             })
           }
         })
+        .orderBy('liberacao', 'asc')
         .then((desafios) => response.status(200).send(desafios))
     } catch (error) {
       return response.status(500).send(error.message)

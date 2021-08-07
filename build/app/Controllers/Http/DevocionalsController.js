@@ -20,7 +20,7 @@ class DevocionalsController {
                     .preload('autor')
                     .preload('comentarios', (query) => query.preload('usuario'))
                     .preload('likes')
-                    .orderBy('id', 'desc')
+                    .orderBy('liberacao', 'desc')
                     .paginate(page, 4)
                     .then((devocionais) => {
                     devocionais.namingStrategy = {
