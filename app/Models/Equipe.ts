@@ -11,6 +11,8 @@ import {
   hasMany,
   HasManyThrough,
   hasManyThrough,
+  HasOne,
+  hasOne,
   ModelQueryBuilderContract,
 } from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
@@ -47,6 +49,9 @@ export default class Equipe extends BaseModel {
 
   @belongsTo(() => Igreja)
   public igreja: BelongsTo<typeof Igreja>
+
+  @hasOne(() => Resposta)
+  public resposta: HasOne<typeof Resposta>
 
   @hasMany(() => Resposta)
   public respostas: HasMany<typeof Resposta>

@@ -1,12 +1,17 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Resposta from 'App/Models/Resposta'
+import Equipe from 'App/Models/Equipe'
 import { DateTime } from 'luxon'
 
 export default class RespostasController {
-  public async index({ response }: HttpContextContract) {
+  public async index({ response, request }: HttpContextContract) {
+    const { desafioId } = request.all()
     try {
-      await Resposta.all().then((respostas) => response.send(respostas))
+      await Equipe.query()
+        .whereHas('resposta', (builder) => builder.where({ desafioId }))
+        .preload('resposta', (builder) => builder.where({ desafioId }))
+        .then((equipes) => response.send(equipes))
     } catch (error) {
       return response.status(500).send(error.message)
     }
@@ -89,7 +94,6 @@ export default class RespostasController {
               })
             ),
             pontos: schema.number(),
-            aprovado: schema.boolean(),
           }),
           messages: {
             'desafioId.exists': 'Desafio não encontrado',
@@ -104,7 +108,7 @@ export default class RespostasController {
         .then(async (data) => {
           const { id } = params
           await Resposta.findOrFail(id).then(async (resposta) => {
-            resposta.merge({ ...data, aprovadoEm: DateTime.utc() })
+            resposta.merge({ ...data, aprovado: true, aprovadoEm: DateTime.utc() })
             await resposta.save()
             return response.send(resposta)
           })

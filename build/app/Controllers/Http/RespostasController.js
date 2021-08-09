@@ -5,11 +5,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Validator_1 = global[Symbol.for('ioc.use')]("Adonis/Core/Validator");
 const Resposta_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Resposta"));
+const Equipe_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Equipe"));
 const luxon_1 = require("luxon");
 class RespostasController {
-    async index({ response }) {
+    async index({ response, request }) {
+        const { desafioId } = request.all();
         try {
-            await Resposta_1.default.all().then((respostas) => response.send(respostas));
+            await Equipe_1.default.query()
+                .whereHas('resposta', (builder) => builder.where({ desafioId }))
+                .preload('resposta', (builder) => builder.where({ desafioId }))
+                .then((equipes) => response.send(equipes));
         }
         catch (error) {
             return response.status(500).send(error.message);
@@ -87,7 +92,6 @@ class RespostasController {
                         resposta: Validator_1.schema.string(),
                     })),
                     pontos: Validator_1.schema.number(),
-                    aprovado: Validator_1.schema.boolean(),
                 }),
                 messages: {
                     'desafioId.exists': 'Desafio não encontrado',
@@ -102,7 +106,7 @@ class RespostasController {
                 .then(async (data) => {
                 const { id } = params;
                 await Resposta_1.default.findOrFail(id).then(async (resposta) => {
-                    resposta.merge({ ...data, aprovadoEm: luxon_1.DateTime.utc() });
+                    resposta.merge({ ...data, aprovado: true, aprovadoEm: luxon_1.DateTime.utc() });
                     await resposta.save();
                     return response.send(resposta);
                 });

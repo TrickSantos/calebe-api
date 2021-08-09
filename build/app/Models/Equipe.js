@@ -75,6 +75,10 @@ __decorate([
     __metadata("design:type", Object)
 ], Equipe.prototype, "igreja", void 0);
 __decorate([
+    Orm_1.hasOne(() => Resposta_1.default),
+    __metadata("design:type", Object)
+], Equipe.prototype, "resposta", void 0);
+__decorate([
     Orm_1.hasMany(() => Resposta_1.default),
     __metadata("design:type", Object)
 ], Equipe.prototype, "respostas", void 0);
