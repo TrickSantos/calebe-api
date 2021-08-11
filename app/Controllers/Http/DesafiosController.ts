@@ -4,6 +4,7 @@ import Bull from '@ioc:Rocketseat/Bull'
 import Desafio from 'App/Models/Desafio'
 import LiberarDesafio from 'App/Jobs/LiberarDesafio'
 import EncerrarDesafio from 'App/Jobs/EncerrarDesafio'
+import { startOfDay } from 'date-fns'
 import { DateTime } from 'luxon'
 
 export default class DesafiosController {
@@ -50,7 +51,11 @@ export default class DesafiosController {
         .then(async (data) => {
           await Desafio.create(data).then((desafio) => {
             if (desafio.liberacao > DateTime.utc()) {
-              Bull.schedule(new LiberarDesafio().key, desafio, desafio.liberacao.toJSDate())
+              Bull.schedule(
+                new LiberarDesafio().key,
+                desafio,
+                startOfDay(desafio.liberacao.toJSDate())
+              )
             } else {
               Bull.add(new LiberarDesafio().key, desafio)
             }
@@ -58,7 +63,7 @@ export default class DesafiosController {
             Bull.schedule(
               new EncerrarDesafio().key,
               desafio,
-              desafio.encerramento.startOf('day').toJSDate()
+              startOfDay(desafio.encerramento.toJSDate())
             )
 
             return response.send(desafio)
@@ -107,23 +112,24 @@ export default class DesafiosController {
           const { id } = params
           await Desafio.findOrFail(id).then(async (desafio) => {
             desafio.merge(data)
-            await desafio.save()
 
-            if (data.liberacao) {
+            if (desafio.liberacao > DateTime.utc()) {
               Bull.schedule(
                 new LiberarDesafio().key,
                 desafio,
-                desafio.liberacao.startOf('day').toJSDate()
+                startOfDay(desafio.liberacao.toJSDate())
               )
             }
-            if (data.encerramento) {
+            if (desafio.encerramento > DateTime.utc()) {
               Bull.schedule(
                 new EncerrarDesafio().key,
                 desafio,
-                desafio.encerramento.startOf('day').toJSDate()
+                startOfDay(desafio.encerramento.toJSDate())
               )
+              desafio.status = true
             }
 
+            await desafio.save()
             return response.send(desafio)
           })
         })
@@ -131,6 +137,7 @@ export default class DesafiosController {
       if (error.messages) {
         return response.status(500).send(error.messages)
       } else {
+        console.log(error)
         return response.status(500).send(error.message)
       }
     }

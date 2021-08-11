@@ -5,6 +5,7 @@ import Comentario from 'App/Models/Comentario'
 import Bull from '@ioc:Rocketseat/Bull'
 import LiberarDevocional from 'App/Jobs/LiberarDevocional'
 import { DateTime } from 'luxon'
+import { startOfDay } from 'date-fns'
 
 export default class DevocionalsController {
   public async index({ response, request }: HttpContextContract) {
@@ -73,7 +74,7 @@ export default class DevocionalsController {
               Bull.schedule(
                 new LiberarDevocional().key,
                 devocional,
-                devocional.liberacao.toJSDate()
+                startOfDay(devocional.liberacao.toJSDate())
               )
             } else {
               Bull.add(new LiberarDevocional().key, devocional)
@@ -120,7 +121,7 @@ export default class DevocionalsController {
                 Bull.schedule(
                   new LiberarDevocional().key,
                   devocional,
-                  devocional.liberacao.toJSDate()
+                  startOfDay(devocional.liberacao.toJSDate())
                 )
               } else {
                 Bull.add(new LiberarDevocional().key, devocional)

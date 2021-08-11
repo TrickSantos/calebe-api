@@ -9,6 +9,7 @@ const Comentario_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/C
 const Bull_1 = __importDefault(global[Symbol.for('ioc.use')]("Rocketseat/Bull"));
 const LiberarDevocional_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Jobs/LiberarDevocional"));
 const luxon_1 = require("luxon");
+const date_fns_1 = require("date-fns");
 class DevocionalsController {
     async index({ response, request }) {
         try {
@@ -74,7 +75,7 @@ class DevocionalsController {
                 .then(async (data) => {
                 await Devocional_1.default.create({ ...data, autorId: auth.user?.id }).then((devocional) => {
                     if (devocional.liberacao > luxon_1.DateTime.utc()) {
-                        Bull_1.default.schedule(new LiberarDevocional_1.default().key, devocional, devocional.liberacao.toJSDate());
+                        Bull_1.default.schedule(new LiberarDevocional_1.default().key, devocional, date_fns_1.startOfDay(devocional.liberacao.toJSDate()));
                     }
                     else {
                         Bull_1.default.add(new LiberarDevocional_1.default().key, devocional);
@@ -117,7 +118,7 @@ class DevocionalsController {
                     await devocional.save();
                     if (data.liberacao) {
                         if (devocional.liberacao > luxon_1.DateTime.utc()) {
-                            Bull_1.default.schedule(new LiberarDevocional_1.default().key, devocional, devocional.liberacao.toJSDate());
+                            Bull_1.default.schedule(new LiberarDevocional_1.default().key, devocional, date_fns_1.startOfDay(devocional.liberacao.toJSDate()));
                         }
                         else {
                             Bull_1.default.add(new LiberarDevocional_1.default().key, devocional);
