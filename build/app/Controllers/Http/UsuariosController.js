@@ -86,7 +86,7 @@ class UsuariosController {
                         Validator_1.rules.unique({ column: 'email', table: 'users', whereNot: { id: id } }),
                     ]),
                     nome: Validator_1.schema.string.optional({ trim: true }),
-                    cpf: Validator_1.schema.string({}, [
+                    cpf: Validator_1.schema.string.optional({}, [
                         Validator_1.rules.maxLength(11),
                         Validator_1.rules.minLength(11),
                         Validator_1.rules.unique({ column: 'cpf', table: 'users', whereNot: { id: id } }),

@@ -83,7 +83,7 @@ export default class UsuariosController {
               rules.unique({ column: 'email', table: 'users', whereNot: { id: id } }),
             ]),
             nome: schema.string.optional({ trim: true }),
-            cpf: schema.string({}, [
+            cpf: schema.string.optional({}, [
               rules.maxLength(11),
               rules.minLength(11),
               rules.unique({ column: 'cpf', table: 'users', whereNot: { id: id } }),
