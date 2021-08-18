@@ -40,6 +40,10 @@ __decorate([
 ], Resposta.prototype, "respostas", void 0);
 __decorate([
     Orm_1.column(),
+    __metadata("design:type", String)
+], Resposta.prototype, "observacao", void 0);
+__decorate([
+    Orm_1.column(),
     __metadata("design:type", Boolean)
 ], Resposta.prototype, "aprovado", void 0);
 __decorate([

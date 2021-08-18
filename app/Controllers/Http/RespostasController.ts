@@ -39,6 +39,7 @@ export default class RespostasController {
                 resposta: schema.string(),
               })
             ),
+            observacao: schema.string.optional(),
           }),
           messages: {
             'desafioId.exists': 'Desafio não encontrado',
@@ -94,6 +95,7 @@ export default class RespostasController {
               })
             ),
             pontos: schema.number(),
+            observacao: schema.string.optional(),
           }),
           messages: {
             'desafioId.exists': 'Desafio não encontrado',

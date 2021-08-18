@@ -40,6 +40,7 @@ class RespostasController {
                     respostas: Validator_1.schema.array().members(Validator_1.schema.object().members({
                         resposta: Validator_1.schema.string(),
                     })),
+                    observacao: Validator_1.schema.string.optional(),
                 }),
                 messages: {
                     'desafioId.exists': 'Desafio não encontrado',
@@ -92,6 +93,7 @@ class RespostasController {
                         resposta: Validator_1.schema.string(),
                     })),
                     pontos: Validator_1.schema.number(),
+                    observacao: Validator_1.schema.string.optional(),
                 }),
                 messages: {
                     'desafioId.exists': 'Desafio não encontrado',

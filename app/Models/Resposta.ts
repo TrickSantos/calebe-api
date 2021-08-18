@@ -24,6 +24,9 @@ export default class Resposta extends BaseModel {
   public respostas: Iresposta[] | string
 
   @column()
+  public observacao: string
+
+  @column()
   public aprovado: boolean
 
   @column.dateTime({ serializeAs: 'aprovadoEm' })
