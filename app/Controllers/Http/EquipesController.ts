@@ -12,7 +12,11 @@ export default class EquipesController {
     const { ranking } = request.all()
     try {
       if (ranking) {
-        return response.status(200).send([])
+        return response.status(200).send([
+          { id: 998, nome: 'Primeiro Colocado', pontos: '0' },
+          { id: 999, nome: 'Segundo Colocado', pontos: '0' },
+          { id: 997, nome: 'Terceiro Colocado', pontos: '0' },
+        ])
       }
       await Equipe.query()
         .where((builder) => {
