@@ -14,6 +14,9 @@ class EquipesController {
     async index({ response, request }) {
         const { ranking } = request.all();
         try {
+            if (ranking) {
+                return response.status(200).send([]);
+            }
             await Equipe_1.default.query()
                 .where((builder) => {
                 if (ranking) {

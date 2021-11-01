@@ -11,6 +11,9 @@ export default class EquipesController {
   public async index({ response, request }: HttpContextContract) {
     const { ranking } = request.all()
     try {
+      if (ranking) {
+        return response.status(200).send([])
+      }
       await Equipe.query()
         .where((builder) => {
           if (ranking) {
